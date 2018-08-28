@@ -57,10 +57,10 @@
             <version>2.0.4.RELEASE</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.antlr/com.springsource.antlr -->
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>com.springsource.antlr</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.antlr</groupId>-->
+            <!--<artifactId>com.springsource.antlr</artifactId>-->
+        <!--</dependency>-->
         <!--配置模板引擎,controller中返回可直接对应html文件-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
