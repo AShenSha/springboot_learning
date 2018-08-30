@@ -54,4 +54,14 @@ public interface CityService {
      * @return
      */
     List<City> findByDescriptionLike(String description);
+
+
+    /**
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param searchContent 查询参数
+     * @return
+     */
+    List<City> searchCity(Integer pageNumber, Integer pageSize, String searchContent);
 }
