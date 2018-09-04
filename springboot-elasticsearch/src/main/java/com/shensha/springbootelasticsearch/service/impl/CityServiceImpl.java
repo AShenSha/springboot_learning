@@ -3,12 +3,11 @@ package com.shensha.springbootelasticsearch.service.impl;
 import com.shensha.springbootelasticsearch.dao.CityDao;
 import com.shensha.springbootelasticsearch.entity.City;
 import com.shensha.springbootelasticsearch.service.CityService;
-import org.elasticsearch.common.lucene.search.function.FiltersFunctionScoreQuery;
+import org.elasticsearch.common.lucene.search.function.*;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.functionscore.FieldValueFactorFunctionBuilder;
-import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
-import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
+import org.elasticsearch.index.query.functionscore.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
+import static org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders.weightFactorFunction;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -91,19 +91,24 @@ public class CityServiceImpl implements CityService {
         return cityPage.getContent();
     }
 
+    /**
+     * 使用QueryBuilder
+     * termQuery("key", obj) 完全匹配
+     * termsQuery("key", obj1, obj2..)   一次匹配多个值
+     * matchQuery("key", Obj) 单个匹配, field不支持通配符, 前缀具高级特性
+     * multiMatchQuery("text", "field1", "field2"..);  匹配多个字段, field有通配符忒行
+     * matchAllQuery();         匹配所有文件
+     */
     private SearchQuery getCitySearchQuery(Integer pageNumber, Integer pageSize, String searchContent) {
         // 短语匹配到的搜索词，求和模式累加权重分
         // 权重分查询 https://www.elastic.co/guide/cn/elasticsearch/guide/current/function-score-query.html
         //   - 短语匹配 https://www.elastic.co/guide/cn/elasticsearch/guide/current/phrase-matching.html
         //   - 字段对应权重分设置，可以优化成 enum
         //   - 由于无相关性的分值默认为 1 ，设置权重分最小值为 10
-//ScoreFunctionBuilders.weightFactorFunction(500)
-//        ,ScoreFunctionBuilders.weightFactorFunction(1000)
-        FunctionScoreQueryBuilder functionScoreQueryBuilder = QueryBuilders
-                .functionScoreQuery(QueryBuilders.multiMatchQuery(searchContent, "name", "description")
-                ).scoreMode(FiltersFunctionScoreQuery.ScoreMode.SUM).setMinScore(MIN_SCORE);
-
-
+        FunctionScoreQueryBuilder functionScoreQueryBuilder =QueryBuilders.functionScoreQuery(new FunctionScoreQueryBuilder.FilterFunctionBuilder[]{
+                new FunctionScoreQueryBuilder.FilterFunctionBuilder(QueryBuilders.multiMatchQuery("name", searchContent), weightFactorFunction(5)),
+                new FunctionScoreQueryBuilder.FilterFunctionBuilder(QueryBuilders.multiMatchQuery("description", searchContent), weightFactorFunction(10))
+        }).scoreMode(FiltersFunctionScoreQuery.ScoreMode.fromString(SCORE_MODE_SUM)).setMinScore(MIN_SCORE);
         // 分页参数
         Pageable pageable = new PageRequest(pageNumber, pageSize);
         return new NativeSearchQueryBuilder()
