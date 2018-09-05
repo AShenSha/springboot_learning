@@ -1,7 +1,12 @@
 package com.shensha.springbootmybatis.entity;
 
 
-public class City {
+import java.io.Serializable;
+
+public class City implements Serializable {
+
+    private static final long serialVersionUID = -1L;
+
     private Long id;
 
     private Long provinceId;
