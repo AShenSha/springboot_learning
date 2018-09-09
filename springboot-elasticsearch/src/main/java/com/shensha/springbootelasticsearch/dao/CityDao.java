@@ -17,4 +17,6 @@ public interface CityDao extends ElasticsearchRepository<City,Long> {
     Page<City> findByDescriptionNot(String description, Pageable page);
 
     Page<City> findByDescriptionLike(String description, Pageable page);
+
+//    List<City> searchCity(Integer pageNumber, Integer pageSize, String searchContent);
 }
