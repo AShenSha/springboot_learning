@@ -43,12 +43,12 @@ public class SpringbootMailsenderApplicationTests {
     public void sendSimpleMail1()throws Exception {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,true);
-        helper.setFrom("995892159@qq.com");
-        helper.setTo("995892159@qq.com");
+        helper.setFrom("ss@qq.com");
+        helper.setTo("ss@qq.com");
         helper.setSubject("wo shi zhu ti");
         helper.setText("wo shi you jian nei rong");
 
-        FileSystemResource file = new FileSystemResource(new File("C:\\Users\\ShenSha\\Desktop\\y.jpg"));
+        FileSystemResource file = new FileSystemResource(new File("y.jpg"));
         helper.addAttachment("wo shi fu jian",file);
         javaMailSender.send(mimeMessage);
     }
@@ -61,12 +61,12 @@ public class SpringbootMailsenderApplicationTests {
     public void sendSimpleMail2()throws Exception {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,true);
-        helper.setFrom("995892159@qq.com");
-        helper.setTo("995892159@qq.com");
+        helper.setFrom("ss@qq.com");
+        helper.setTo("9ss@qq.com");
         helper.setSubject("wo shi zhu ti");
         helper.setText("<html><body><h1>wtf?</h1><img src=\"cid:y\"/></body></html>",true);
 
-        FileSystemResource file = new FileSystemResource(new File("C:\\Users\\ShenSha\\Desktop\\y.jpg"));
+        FileSystemResource file = new FileSystemResource(new File("y.jpg"));
         helper.addInline("y",file);
         javaMailSender.send(mimeMessage);
     }
